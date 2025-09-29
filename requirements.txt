@@ -1,0 +1,20 @@
+# Day 1 dependencies
+requests
+tensorflow
+numpy
+matplotlib
+ollama
+torch
+transformers
+tabulate
+sentence-transformers
+tf-keras
+plotly
+llama-cpp-python
+gradio
+openai
+anthropic
+
+# Day 2 dependencies
+chromadb
+beautifulsoup4
