@@ -80,3 +80,4 @@ __pycache__/
 /embedding/test_embeddings.pkl
 /embedding/embeddings.pkl
 /extracting-data/gdpr_article_content.txt
+/day-2/chroma_db/
