@@ -3,6 +3,7 @@ requests
 tensorflow
 numpy
 matplotlib
+mistralai
 ollama
 torch
 transformers
