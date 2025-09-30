@@ -10,7 +10,6 @@ import math
 import random
 from pathlib import Path
 
-
 def convert_to_roman_numerals(n: int) -> str:
     """
     Converts a number into Roman numerals
@@ -162,11 +161,11 @@ def get_available_models() -> list:
 
 def is_suitable_model(model: Dict[str, Any]) -> bool:
     """Filter for suitable models - adjust criteria as needed"""
-    return (model["size"] <=7_000_000_000 and
+    return (model["size"] <=10_000_000_000 and
             "bert" not in model["details"]["family"]
-            # and "qwen3" in model["name"] )
-                and model["name"] in [
-            "qwen3:latest"
+            and "qwen3:4b" in model["name"] )
+                # and model["name"] in [
+            # "qwen3:latest",
             # "qwen3:0.6b-fp16",
             # "qwen3:1.7b-fp16",
             # "qwen3:4b-fp16",
@@ -179,6 +178,7 @@ def is_suitable_model(model: Dict[str, Any]) -> bool:
             # "qwen2.5-coder:7b",
             # "mistral-small:latest",
             # "granite3.1-dense:latest",
+            # "qwen2.5-coder:latest",
             # "aya-expanse:latest",
             # "qwen2.5:latest",
             # "llama3.2:3b-instruct-fp16",
@@ -192,8 +192,8 @@ def is_suitable_model(model: Dict[str, Any]) -> bool:
             # "qwen2.5:1.5b-instruct:latest",
             # "granite3.1-moe:3b-instruct-fp16",
             # "smollm2:latest",
-            ]
-            )
+            # ]
+            # )
 
 
 def run_single_test(prompt: str, expected_result: int, model: str) -> tuple[Dict[str, Any], float]:
