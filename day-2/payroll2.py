@@ -57,7 +57,7 @@ def query_ollama(schema, sample_data=None):
 
     response = requests.post('http://localhost:11434/api/generate',
                              json={
-                                 "model": "qwen2.5-coder:latest",
+                                 "model": "qwen3:latest",
                                  "prompt": prompt,
                                  "stream": False,
                                 "options": {
