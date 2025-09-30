@@ -352,7 +352,7 @@ def main():
 
     try:
         # Initialize RAG system with default settings
-        rag = TransformerRAG("data/alice_in_wonderland.txt")
+        rag = TransformerRAG("data/Alice in Wonderland.txt")
         print()
 
         # Demo questions - specific, detail-oriented questions that demonstrate RAG retrieval

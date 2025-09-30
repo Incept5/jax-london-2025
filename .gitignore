@@ -81,3 +81,5 @@ __pycache__/
 /embedding/embeddings.pkl
 /extracting-data/gdpr_article_content.txt
 /day-2/chroma_db/
+/day-2/sentiment_analysis_results.csv
+/day-2/sentiment_analysis_results.png

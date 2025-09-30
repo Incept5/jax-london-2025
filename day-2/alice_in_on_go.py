@@ -125,7 +125,7 @@ def main():
 
     try:
         # Initialize full-context system
-        qa = FullContextQA("data/alice_in_wonderland.txt")
+        qa = FullContextQA("data/Alice in Wonderland.txt")
         print(f"\nFull-context system ready!\n")
 
         # Start with just a few questions to test

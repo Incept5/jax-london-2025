@@ -20,3 +20,6 @@ anthropic
 # Day 2 dependencies
 chromadb
 beautifulsoup4
+kagglehub
+textblob
+seaborn

@@ -3,243 +3,151 @@ from bs4 import BeautifulSoup
 import re
 
 
-def scrape_gdpr_article(url):
+def scrape_website(url):
     """
-    Scrape GDPR article content from gdpr-info.eu
-    """
+    Generic website scraper that works with any URL
 
-    # Add a user agent to avoid being blocked
+    Args:
+        url: The URL to scrape
+
+    Returns:
+        Extracted text content or None if failed
+    """
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
 
     try:
-        # Send a GET request to the URL
         response = requests.get(url, headers=headers)
         response.raise_for_status()
 
-        # Parse the HTML content with explicit parser
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        # Try multiple selectors to find the main content
+        # Try common content selectors in order of specificity
         content_selectors = [
-            'div[data-elementor-type="single-post"]',  # Original selector
-            '.entry-content',  # Common WordPress content class
-            '.post-content',  # Alternative content class
-            'main',  # Main content element
-            'article',  # Article element
-            '.content',  # Generic content class
-            'body'  # Fallback to body
+            'div[data-elementor-type="single-post"]',  # Elementor posts
+            '.entry-content',  # WordPress content
+            '.post-content',
+            'main article',    # Semantic HTML
+            'main',
+            'article',
+            '.content',
+            '.main-content',
+            '#content',
+            'body'  # Fallback
         ]
 
         main_content = None
         for selector in content_selectors:
             main_content = soup.select_one(selector)
             if main_content:
-                print(f"Found content using selector: {selector}")
                 break
 
         if not main_content:
-            print("Could not find main content container, using entire body")
             main_content = soup.find('body')
 
-        if main_content:
-            text_content = []
-
-            # Extract the article title if present
-            title = soup.find('title')
-            if title:
-                title_text = title.get_text().strip()
-                text_content.append(f"# {title_text}\n")
-
-            # Look for article headings specifically
-            article_heading = soup.find(['h1', 'h2'], string=re.compile(r'Article \d+', re.IGNORECASE))
-            if article_heading:
-                text_content.append(f"## {article_heading.get_text().strip()}\n")
-
-            # Find all relevant content elements in order
-            content_elements = main_content.find_all([
-                'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-                'p', 'li', 'div', 'span', 'td', 'th'
-            ])
-
-            # Filter out navigation, footer, and other non-content elements
-            filtered_elements = []
-            for element in content_elements:
-                # Skip elements that are likely navigation or metadata
-                if element.find_parent(['nav', 'footer', 'header']):
-                    continue
-
-                # Skip elements with certain classes that indicate non-content
-                element_classes = element.get('class', [])
-                skip_classes = ['nav', 'menu', 'footer', 'sidebar', 'widget', 'meta']
-                if any(skip_class in ' '.join(element_classes).lower() for skip_class in skip_classes):
-                    continue
-
-                # Get text content
-                text = element.get_text().strip()
-                if not text or len(text) < 3:  # Skip very short or empty elements
-                    continue
-
-                # Skip if text is just a single character or number
-                if len(text) == 1:
-                    continue
-
-                filtered_elements.append((element, text))
-
-            # Process filtered elements with better deduplication
-            processed_texts = set()  # To avoid duplicates
-            for element, text in filtered_elements:
-                # Skip if we've already processed similar text (handles slight variations)
-                text_normalized = ' '.join(text.split())
-                if text_normalized in processed_texts or len(text_normalized) < 10:
-                    continue
-                processed_texts.add(text_normalized)
-
-                # Format based on element type
-                if element.name and element.name.startswith('h'):
-                    # Determine heading level
-                    level = int(element.name[1]) if element.name[1].isdigit() else 2
-                    heading_prefix = '#' * min(level, 6)
-                    text_content.append(f"\n{heading_prefix} {text}\n")
-                elif element.name == 'li':
-                    text_content.append(f"- {text}")
-                elif element.name in ['td', 'th']:
-                    # Handle table cells
-                    if element.parent and element.parent.name == 'tr':
-                        continue  # We'll handle tables separately
-                else:
-                    # Regular paragraph or div content
-                    text_content.append(text)
-
-            # Handle tables separately to maintain structure
-            tables = main_content.find_all('table')
-            for table in tables:
-                text_content.append("\n### Table\n")
-                for row in table.find_all('tr'):
-                    cells = row.find_all(['td', 'th'])
-                    if cells:
-                        row_text = ' | '.join(cell.get_text().strip() for cell in cells)
-                        if row_text.strip():
-                            text_content.append(f"| {row_text} |")
-                text_content.append("")
-
-            # Clean up and join the content
-            final_text = '\n'.join(text_content)
-
-            # Clean up excessive whitespace
-            final_text = re.sub(r'\n{4,}', '\n\n\n', final_text)
-            final_text = re.sub(r' {2,}', ' ', final_text)
-            final_text = re.sub(r'^\s+', '', final_text, flags=re.MULTILINE)
-            final_text = final_text.strip()
-
-            # Save to file
-            filename = "gdpr_article_content.txt"
-            with open(filename, 'w', encoding='utf-8') as f:
-                f.write(final_text)
-
-            print(f"Successfully scraped content and saved to {filename}")
-            return final_text
-
-        else:
-            print("Could not find any content on the page.")
+        if not main_content:
             return None
 
-    except requests.exceptions.RequestException as e:
-        print(f"Error occurred during scraping: {e}")
-        return None
+        # Extract title
+        title = soup.find('title')
+        title_text = title.get_text().strip() if title else ""
+
+        # Extract main heading
+        main_heading = soup.find(['h1', 'h2'])
+        heading_text = main_heading.get_text().strip() if main_heading else ""
+
+        # Get all content elements
+        content_elements = main_content.find_all([
+            'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'div', 'span'
+        ])
+
+        # Filter and process content
+        text_parts = []
+        processed_texts = set()
+
+        # Add title if different from heading
+        if title_text and title_text != heading_text:
+            text_parts.append(f"# {title_text}\n")
+
+        for element in content_elements:
+            # Skip navigation, footer, header elements
+            if element.find_parent(['nav', 'footer', 'header']):
+                continue
+
+            # Skip elements with navigation classes
+            classes = ' '.join(element.get('class', [])).lower()
+            if any(skip in classes for skip in ['nav', 'menu', 'footer', 'sidebar', 'widget']):
+                continue
+
+            text = element.get_text().strip()
+            if not text or len(text) < 10:
+                continue
+
+            # Avoid duplicates
+            normalized = ' '.join(text.split())
+            if normalized in processed_texts:
+                continue
+            processed_texts.add(normalized)
+
+            # Format based on element type
+            if element.name.startswith('h'):
+                level = int(element.name[1]) if element.name[1].isdigit() else 2
+                prefix = '#' * min(level, 6)
+                text_parts.append(f"\n{prefix} {text}\n")
+            elif element.name == 'li':
+                text_parts.append(f"- {text}")
+            else:
+                text_parts.append(text)
+
+        # Join and clean up
+        final_text = '\n'.join(text_parts)
+        final_text = re.sub(r'\n{3,}', '\n\n', final_text)
+        final_text = re.sub(r' {2,}', ' ', final_text)
+
+        return final_text.strip()
+
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        print(f"Error scraping {url}: {e}")
         return None
 
 
-def scrape_multiple_gdpr_articles(base_url_pattern, article_numbers):
+def scrape_multiple_websites(urls):
     """
-    Scrape multiple GDPR articles using a session for better performance
+    Scrape multiple websites using the generic scraper
 
     Args:
-        base_url_pattern: URL pattern with {} placeholder for article number
-        article_numbers: List of article numbers to scrape
+        urls: List of URLs to scrape, or dict with labels as keys
 
     Returns:
-        Dict with article numbers as keys and content as values
+        Dict with results
     """
-    all_content = {}
+    results = {}
 
-    # Use session for connection reuse
-    with requests.Session() as session:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
-        session.headers.update(headers)
+    # Handle both list and dict inputs
+    if isinstance(urls, list):
+        url_dict = {f"Site {i+1}": url for i, url in enumerate(urls)}
+    else:
+        url_dict = urls
 
-        for article_num in article_numbers:
-            url = base_url_pattern.format(article_num)
-            print(f"\nScraping Article {article_num} from {url}")
+    for label, url in url_dict.items():
+        print(f"\nScraping {label}...")
 
-            content = scrape_gdpr_article_with_session(session, url)
-            if content:
-                all_content[article_num] = content
-                print(f"Successfully scraped Article {article_num}")
-            else:
-                print(f"Failed to scrape Article {article_num}")
+        content = scrape_website(url)
+        if content:
+            results[label] = content
+            print(f"✓ Successfully scraped {label} ({len(content)} characters)")
+        else:
+            print(f"✗ Failed to scrape {label}")
 
-    return all_content
-
-
-def scrape_gdpr_article_with_session(session, url):
-    """
-    Scrape GDPR article content using an existing requests session
-    """
-    try:
-        response = session.get(url)
-        response.raise_for_status()
-
-        # Parse the HTML content with explicit parser
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-        # Use the same content extraction logic as the main function
-        content_selector = '.entry-content'
-        main_content = soup.select_one(content_selector)
-
-        if main_content:
-            text_content = []
-
-            # Extract title
-            title = soup.find('title')
-            if title:
-                title_text = title.get_text().strip()
-                text_content.append(f"# {title_text}\n")
-
-            # Extract text content
-            for element in main_content.find_all(['p', 'li', 'h1', 'h2', 'h3']):
-                text = element.get_text().strip()
-                if text and len(text) > 10:
-                    if element.name and element.name.startswith('h'):
-                        level = int(element.name[1]) if element.name[1].isdigit() else 2
-                        heading_prefix = '#' * min(level + 1, 6)
-                        text_content.append(f"\n{heading_prefix} {text}\n")
-                    elif element.name == 'li':
-                        text_content.append(f"- {text}")
-                    else:
-                        text_content.append(text)
-
-            return '\n'.join(text_content).strip()
-
-        return None
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error occurred during scraping: {e}")
-        return None
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-        return None
+    return results
 
 
 if __name__ == "__main__":
-    # Single article scraping
+    # Single website scraping demo
+    print("=== SINGLE WEBSITE DEMO ===")
     url = "https://gdpr-info.eu/art-17-gdpr/"
-    content = scrape_gdpr_article(url)
+    content = scrape_website(url)
 
     if content:
         print("\n" + "=" * 50)
@@ -248,7 +156,35 @@ if __name__ == "__main__":
         print(content[:500] + "..." if len(content) > 500 else content)
         print(f"\nTotal characters scraped: {len(content)}")
 
-    # Example: Scrape multiple articles
-    # articles_to_scrape = [22, 23, 24]  # Article numbers
-    # base_pattern = "https://gdpr-info.eu/art-{}-gdpr/"
-    # multiple_content = scrape_multiple_gdpr_articles(base_pattern, articles_to_scrape)
+    # Multiple websites scraping demo with diverse sites
+    print("\n\n=== MULTIPLE WEBSITES DEMO ===")
+    websites_to_scrape = [
+        "https://gdpr-info.eu/art-17-gdpr/",
+        "https://gdpr-info.eu/art-18-gdpr/",
+        "https://gdpr-info.eu/art-19-gdpr/"
+    ]
+
+    multiple_content = scrape_multiple_websites(websites_to_scrape)
+
+    # Show detailed summaries
+    if multiple_content:
+        print("\n" + "=" * 60)
+        print("DETAILED SUMMARIES")
+        print("=" * 60)
+        for label, content in multiple_content.items():
+            print(f"\n{'-' * 40}")
+            print(f"📄 {label}")
+            print(f"{'-' * 40}")
+            if content:
+                lines = content.split('\n')
+                # Find the first substantial line (title)
+                title = next((line.strip('# ') for line in lines if line.strip() and len(line.strip()) > 5), "No title")
+
+                print(f"Title: {title}")
+                print(f"Length: {len(content)} characters")
+                print(f"Preview:")
+                print(content[:400] + "..." if len(content) > 400 else content)
+            else:
+                print("❌ No content available")
+    else:
+        print("No websites were successfully scraped.")
