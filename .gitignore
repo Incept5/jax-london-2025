@@ -83,3 +83,4 @@ __pycache__/
 /day-2/chroma_db/
 /day-2/sentiment_analysis_results.csv
 /day-2/sentiment_analysis_results.png
+/day-2/ollama_function_results.csv
