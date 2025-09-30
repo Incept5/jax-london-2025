@@ -314,7 +314,7 @@ def main():
 
     try:
         # Initialize RAG system with default settings
-        rag = GenericRAG("data/Alice in Wonderland.txt")
+        rag = GenericRAG("data/alice_in_wonderland.txt")
         print()
 
         # Demo questions - specific, detail-oriented questions that demonstrate RAG retrieval
