@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 
 # Configuration
-LLM_MODEL = "gemma3n:e2b"
+LLM_MODEL = "gemma3"
 
 
 class OllamaClient:
@@ -125,7 +125,7 @@ def main():
 
     try:
         # Initialize full-context system
-        qa = FullContextQA("data/Alice in Wonderland.txt")
+        qa = FullContextQA("data/alice_in_wonderland.txt")
         print(f"\nFull-context system ready!\n")
 
         # Start with just a few questions to test
