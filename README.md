@@ -82,16 +82,40 @@ gradio, tabulate
 - `rag_alice_in_wonderland.py` - Basic RAG implementation
 - `rag_alice_in_wonderland_transformers.py` - Transformers-based RAG
 
-#### Data Processing
+#### Sentiment Analysis
+- `analyse_sentiment_01.py` - Basic sentiment analysis
+- `analyse_sentiment_02.py` - Advanced sentiment analysis
+- `analyse_sentiment_kaggle.py` - Kaggle dataset sentiment analysis
+- `sentiment_analysis_results.csv` - Analysis output data
+- `sentiment_analysis_results.png` - Visualization of results
+
+#### Data Extraction & Processing
 - `alice_in_on_go.py` - Text processing utilities
 - `data_extraction_ollama.py` - Document extraction with Ollama
+- `formatted_response_example.py` - Structured response formatting
+- `fill_in_middle.py` - Code infilling examples
+- `kaggle_summary_complete.py` - Dataset summarization
+
+#### Web Scraping & Data Collection
 - `scrape.py` - Web scraping utilities
-- `visual_ml_studio.py` - Visual ML tools
+- `scrape_gdpr_article.py` - GDPR content extraction
+- `gdpr_article_content.txt` - Extracted legal document
+
+#### Function Calling & Tool Use
+- `ollama_function_support.py` - Function calling with Ollama
+- `ollama_function_results.csv` - Function execution results
+
+#### Database & Structured Data
+- `payroll.py` - Database interaction examples
+- `payroll2.py` - Advanced payroll processing
+- `city_payroll.db` - SQLite database sample
+
+#### Visualization Tools
+- `visual_ml_studio.py` - Visual ML Studio integration
 
 #### Sample Data
-- `data/Alice in Wonderland.txt` - Text corpus for RAG examples
-- `data/IMG_*.jpg` - Sample images for processing
-- `gdpr_article_content.txt` - Legal document examples
+- `data/alice_in_wonderland.txt` - Text corpus for RAG examples
+- `data/IMG_*.jpg` - Sample images for OCR and processing
 
 #### Persistent Storage
 - `chroma_db/` - ChromaDB vector database storage
@@ -147,12 +171,17 @@ ollama pull gemma3n:e4b     # For text generation
 4. **Analyze Tokens**: Experiment with `show_tokens.py`
 5. **Creative Applications**: Try `ai_astrology.py`
 
-### Day 2: Advanced RAG Systems
+### Day 2: Advanced RAG Systems & Applications
 1. **Basic RAG**: Start with `rag_alice_in_wonderland.py`
 2. **Production RAG**: Explore `rag_alice_in_wonderland_chromadb.py`
-3. **Understand Chunking**: Analyze text processing strategies
-4. **Persistent Storage**: Work with ChromaDB
-5. **Custom Data**: Adapt examples for your own documents
+3. **Sentiment Analysis**: Try `analyse_sentiment_01.py` through `analyse_sentiment_kaggle.py`
+4. **Function Calling**: Experiment with `ollama_function_support.py`
+5. **Data Extraction**: Use `data_extraction_ollama.py` for structured extraction
+6. **Web Scraping**: Learn scraping with `scrape_gdpr_article.py`
+7. **Database Operations**: Work with structured data in `payroll.py`
+8. **Code Infilling**: Try `fill_in_middle.py` for code completion
+9. **Persistent Storage**: Work with ChromaDB
+10. **Custom Data**: Adapt examples for your own documents
 
 ## 🔍 Key Features
 
@@ -161,6 +190,28 @@ ollama pull gemma3n:e4b     # For text generation
 - **Persistent Vector Storage**: ChromaDB integration for efficient retrieval
 - **Multiple Embedding Strategies**: Support for various embedding models
 - **Multilingual Support**: Works with multiple languages out of the box
+
+### Sentiment Analysis & NLP
+- **Multiple Approaches**: Basic to advanced sentiment analysis techniques
+- **Dataset Integration**: Kaggle dataset analysis examples
+- **Visualization**: Automated chart generation for results
+- **CSV Export**: Results exportable for further analysis
+
+### Function Calling & Tool Use
+- **Ollama Functions**: Native function calling support
+- **Structured Outputs**: JSON-formatted responses
+- **Tool Integration**: Connect AI to external systems
+
+### Data Extraction & Web Scraping
+- **Structured Extraction**: Pull specific data from documents
+- **Web Content**: Scrape and process web pages
+- **Legal Documents**: Parse complex document formats
+- **Formatted Responses**: Clean, structured output
+
+### Database & Structured Data
+- **SQLite Integration**: Work with local databases
+- **Payroll Processing**: Real-world data examples
+- **Query Generation**: AI-powered SQL queries
 
 ### Production-Ready Code
 - **Error Handling**: Robust error management and fallbacks
@@ -182,8 +233,14 @@ After completing this workshop, you'll be able to:
 1. **Integrate Multiple AI APIs**: Connect to OpenAI, Claude, Groq, and more
 2. **Build RAG Systems**: Create intelligent document retrieval applications
 3. **Work with Embeddings**: Understand and implement vector representations
-4. **Optimize Performance**: Configure chunking, overlap, and retrieval strategies
-5. **Deploy AI Applications**: Build production-ready AI-powered tools
+4. **Perform Sentiment Analysis**: Analyze text sentiment with various approaches
+5. **Use Function Calling**: Integrate AI with external tools and systems
+6. **Extract Structured Data**: Pull specific information from unstructured text
+7. **Scrape Web Content**: Gather and process data from websites
+8. **Work with Databases**: Integrate AI with SQLite and structured data
+9. **Generate Code**: Use AI for code completion and infilling
+10. **Optimize Performance**: Configure chunking, overlap, and retrieval strategies
+11. **Deploy AI Applications**: Build production-ready AI-powered tools
 
 ## 🤝 Support
 
